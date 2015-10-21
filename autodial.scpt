@@ -19,8 +19,8 @@
 -- http://stackoverflow.com/a/16977401/857156
 on run { dialme, confcode }
 -- validate dialme (10 digits)
-if not isNumericString(dialme, 10) then
-  return "ERROR: first argument must be a 10-digit phone number!"
+if not isNumericString(dialme, 10) and not isNumericString(dialme, 13) then
+  return "ERROR: first argument must be a 10- or 13-digit phone number!"
 end if
 -- validate confcode (9 digits)
 if not isNumericString(confcode, 9) then
@@ -29,6 +29,7 @@ end if
 
 tell application "RingCentral for Mac.app"
   activate
+  delay 0.2
   -- activate dial pad
   tell application "System Events" to tell process "RingCentral for Mac"
     -- open keypad
@@ -48,7 +49,7 @@ tell application "RingCentral for Mac.app"
     end tell
 
     -- click green "dial" button
-    set cmd to "cliclick c:=" & (px + (sx * 0.5)) & ",=" & (py + (sy * 0.9))
+    set cmd to "cliclick c:=" & (px + (sx * 0.5)) & ",=" & (py + (sy * 0.85))
     --set output to output & " " & cmd
     do shell script cmd
 
@@ -81,7 +82,7 @@ on isNumericString(str, len)
   if n is not equal to len then return false
   try
     repeat with i from 1 to n
-      set isOk to ((character i of str) is in "0123456789")
+      set isOk to ((character i of str) is in "0123456789+")
       if isOk = false then return false
     end repeat
     return true
